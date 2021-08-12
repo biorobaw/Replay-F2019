@@ -1,0 +1,3 @@
+config  group run_id  experiment habEpisodes
+c0 hab  0 ./src/main/java/com/github/biorobaw/scs_models/replay_f2019/old/experiments/experiment_1.xml 10
+c0 no_hab  0 ./src/main/java/com/github/biorobaw/scs_models/replay_f2019/old/experiments/experiment_1.xml 100

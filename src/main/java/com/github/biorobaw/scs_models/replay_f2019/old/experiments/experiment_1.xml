@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="us-ascii"?>
+
+
+<experiment>
+
+	<variables seed="3365448354185182426" PROJECT="com.github.biorobaw.scs_models.replay_f2019.old" 
+			   numActions="8" feeding_distance="0.08"/>
+	
+	<!-- SCSDisplay vs NoDisplay -->
+	<display class="$(SCS).gui.displays.SCSDisplay"
+		window="-1.9,-0.1,7.6,11.4" syncDisplay="true" />
+		
+	<simulator
+		class="$(SCS).simulation.scs_simulator.SCSSimulator"
+		simulation_step_ms="30" simulation_speed="1" /> <!-- max speed = 15 -->
+
+	<maze class="$(SCS).maze.mazes.MultipleT" width="0.2" length="2.6" tSide="1.8"  x="-0.1" y="0">
+		<bufferedWalls bufferedRadius="0.19" showWalls="true"/>
+		<right><right><left> </left></right></right>
+	</maze>
+
+	<template id="model"
+    class="$(PROJECT).model.Model"
+		num_actions="$(numActions)" 
+		
+		num_cells="430"
+		_PCRadius="0.184"
+		PCRadius="0.46"
+    	pc_bin_size="0.04"
+		
+		discountFactor="0.99"
+		v_learningRate="0.6"
+		_q_learningRate="0.7"
+		
+		step="0.08"
+		
+		wTransitionLR="1"
+		num_replay="200"
+		propagation_threshold="0.001"
+		asleep_reward_distance="$(feeding_distance)"
+		/>
+
+	<template id="robot"
+			  class="$(SCS).robot.Robot">
+		<robot_proxy class="$(SCS).robot.proxies.SCSRobotProxy"/>
+		<module class="$(SCS).robot.modules.localization.GlobalLocalization"/>
+		<module class="$(SCS).robot.modules.FeederModule" 
+				max_feeding_distance="$(feeding_distance)"/><!-- feeding distance is optional, defaults to 0.1m -->	
+		<module class="$(SCS).robot.modules.distance_sensing.SCSWallDistanceSensors"
+			 	num_sensors="$(numActions)" max_sensing_distance="2"/>  
+	</template>
+
+	<groups>
+		<hab trials="hab,task">
+			<sub_1 template="model" >
+					   <robot template="robot"/>
+			</sub_1>
+		</hab>
+		<no_hab trials="task">
+			<sub_1 template="model" >
+					   <robot template="robot"/>
+			</sub_1>
+		</no_hab>
+	</groups>
+	
+	
+	<trial id="hab" numEpisodes="$(habEpisodes)">
+		<episodeTasks>
+			<init_pos class="$(SCS).tasks.episode.robot.PlaceRobotInitially" 
+					subject_id="sub_1" pointXYW="0,0.1,0"/>
+		</episodeTasks>
+		<cycleTasks>
+			<!-- the name of task nodes does not matter, you can name them however you wish -->
+			<maxCyclesCondition class="$(SCS).tasks.cycle.condition.MaxCycles"
+								cycles="2000"/> 
+			<reachedFeeder class="$(SCS).tasks.cycle.condition.NearPointCondition"
+							x="0" y="10.5" radius="$(feeding_distance)" robot_id="sub_1" /> 
+		</cycleTasks>
+	</trial>
+	
+	<trial id="task" numEpisodes="40">
+		<trialTasks>
+			<addFeeder class="$(SCS).tasks.trial.feeders.AddFeeders" x="0" y="10.5" id="1"/>
+			<start_replay class="$(PROJECT).tasks.ActivateReplay" subject_id="sub_1"/>
+		</trialTasks>
+		<episodeTasks>
+			<t1 class="$(SCS).tasks.episode.feeders.SetFoodAllFeeders" />
+			<init_pos class="$(SCS).tasks.episode.robot.PlaceRobotInitially" 
+					subject_id="sub_1" pointXYW="0,0.1,0"/>
+		</episodeTasks>
+		<cycleTasks>
+			<!-- the name of task nodes does not matter, you can name them however you wish -->
+			<maxCyclesCondition class="$(SCS).tasks.cycle.condition.MaxCycles"
+								cycles="2000"/> 
+			<noFoodLeftCondition class="$(SCS).tasks.cycle.condition.food.NoFoodLeft" /> 
+		</cycleTasks>
+	</trial>
+
+
+</experiment>

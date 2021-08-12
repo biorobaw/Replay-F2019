@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.github.biorobaw.scs_models</groupId>
+  <artifactId>Replay-F2019</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>Replay-F2019</name>
+  <description>Upgrade of our previous Replay model to work with SCS V4.</description>
+  
+  <properties>
+		<maven.compiler.source>10</maven.compiler.source>
+		<maven.compiler.target>10</maven.compiler.target>
+  </properties>
+  
+  
+  
+  
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>com.github.biorobaw</groupId>
+  		<artifactId>scs</artifactId>
+  		<version>4.0.0-SNAPSHOT</version>
+  	</dependency>
+    <dependency>
+	    <groupId>org.apache.commons</groupId>
+	    <artifactId>commons-lang3</artifactId>
+	    <version>3.9</version>
+    </dependency>
+  </dependencies>
+</project>
